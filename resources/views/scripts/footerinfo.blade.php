@@ -1,0 +1,1 @@
+<div id="footer" class="span12"> 2022 &copy; LGU Manticao<a href="https://gmail.com"> Developed by: Reygaren Balingit</a> </div>
