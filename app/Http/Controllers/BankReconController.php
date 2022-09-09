@@ -7,6 +7,11 @@ use App\Models\Cashbook;
 use App\Models\ReferenceNumber;
 use App\Models\Particular;
 use App\Models\Supplier;
+use App\Models\AccountingEntries;
+use App\Models\ResponsibilityCenter;
+use App\Models\DvNumber;
+use App\Models\AcountingEntriesAccount;
+
 use DB;
 
 class BankReconController extends Controller
@@ -304,7 +309,18 @@ class BankReconController extends Controller
                 }
             
             }
-            
+            //add dv number
+            $dv_no = DvNumber::where('dv_no', '=', $request->dv_no)->first();
+
+            if($dv_no == "")
+            {
+                $dv_no = new DvNumber;
+                $dv_no->dv_no = $request->dv_no;
+                $dv_no->save();
+                $dv_no = $dv_no->id;
+            }
+            else $dv_no = $dv_no->id;
+
             $last_checkno = 0;
             if($request->reference_no != "")
             {
@@ -315,8 +331,7 @@ class BankReconController extends Controller
                 $check_cashbook = Cashbook::where('referenceno', '=', $request->reference_no)
                                         ->where('particular_id', '=', $particular)
                                         ->where('fund_id', '=', $request->fund)
-                                        ->where('debit', '=', $request->debit)
-                                        ->where('credit', '=', $request->credit)->first();
+                                        ->where('amount', '=', $request->amount)->first();
                 
                 if($check_cashbook == "") 
                 {
@@ -327,11 +342,66 @@ class BankReconController extends Controller
                     $cashbook->year_id = $request->year;
                     $cashbook->month = $request->month;
                     $cashbook->date = $request->date;
-                    $cashbook->debit = $request->debit;
-                    $cashbook->credit = $request->credit;
                     $cashbook->last_checkno = $last_checkno;
+                    $cashbook->dv_id = $dv_no;
+                    $cashbook->amount = $request->amount;
                     $cashbook->save();
-    
+                    $cashbook_id = $cashbook->id;
+
+                    //add accounting entries
+                    $resp_centers = $request->resp_center;
+                    $accountsandexplanations = $request->accountsandexplanations;
+                    $accountcodes = $request->accountcodes;
+                    $debits = $request->debits;
+                    $credits = $request->credits;
+
+                    $noOfRows = $request->no_of_rows;
+
+                    for($i = 0; $i<$noOfRows; $i++)
+                    {
+                        $resp_center = ResponsibilityCenter::where('resp_center', '=', $resp_centers[$i])->first();
+
+                        if($resp_centers[$i] == "")
+                        {
+                            $resp_center = new ResponsibilityCenter;
+                            $resp_center->resp_center = 0;
+                            $resp_center->save();
+                            $resp_center = $resp_center->id;
+                        }
+
+                        
+                        if($resp_center == "")
+                        {
+                          $resp_center = new ResponsibilityCenter;
+                          $resp_center->resp_center = $resp_centers[$i];
+                          $resp_center->save();
+                          $resp_center = $resp_center->id;
+                        }
+                        else
+                        {
+                            $resp_center = $resp_center->id;
+                        }
+
+                        $account = AcountingEntriesAccount::where('accountandexplanation', '=', $accountsandexplanations[$i])
+                                                            ->where('accountcode', '=', $accountcodes[$i])->first();
+
+                        if($account == "")
+                        {
+                            $account = new AcountingEntriesAccount;
+                            $account->accountandexplanation = $accountsandexplanations[$i];
+                            $account->accountcode = $accountcodes[$i];
+                            $account->save();
+                            $account = $account->id;
+                        }
+                        else $account = $account->id;
+                        $entry = new AccountingEntries;
+                        $entry->rescen_id = $resp_center;
+                        $entry->cashbook_id = $cashbook_id;
+                        $entry->account_id = $account;
+                        $entry->debit = $debits[$i];
+                        $entry->credit = $credits[$i];
+                        $entry->save();
+                    }
                     return response()->json([
                         'status' => 200,
                         'success' => 'Data successfully added!'
@@ -356,51 +426,5 @@ class BankReconController extends Controller
                 ]);
             }
         }
-    }
-
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
     }
 }

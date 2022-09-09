@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('dvnumbers', function (Blueprint $table) {
             $table->id();
+            $table->string('dv_no');
             $table->timestamps();
         });
     }

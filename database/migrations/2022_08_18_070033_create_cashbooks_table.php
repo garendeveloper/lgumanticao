@@ -31,12 +31,18 @@ return new class extends Migration
                         ->on('years')
                         ->onUpdate('cascade')
                         ->onDelete('cascade');
+            $table->unsignedBigInteger('dv_id');
+            $table->foreign('dv_id')->references('id')
+                        ->on('dvnumbers')
+                        ->onUpdate('cascade')
+                        ->onDelete('cascade');
             $table->integer('month');
             $table->date('date');
             $table->integer('last_checkno');
             $table->integer('encashment_status')->default(0);
             $table->double('debit')->nullable();
             $table->double('credit')->nullable();
+            $table->double('amount');
             $table->timestamps();
         });
     }

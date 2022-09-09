@@ -8,4 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class accountingentries extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'cashbook_id', 'debit', 'credit',
+    ];
 }

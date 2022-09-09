@@ -197,8 +197,8 @@ select,  input[type="text"], input[type="password"], input[type="datetime"], inp
 												</tr>
 											</thead>
 											<tbody>
-												<form id ="cb_form" action="" method = "post">
-													@csrf
+												<form id ="cb_form" >
+													<!-- @csrf -->
 										
 													<tr >
 													<input type="text" style ="display:none" id = "cashbook_id">
@@ -208,13 +208,13 @@ select,  input[type="text"], input[type="password"], input[type="datetime"], inp
 														<input type="date"  name = "date" id = "date" autocomplete = "off" style = "font-family: Segoe uI; height: 40px; text-align: center;" data-date-format="dd-mm-yyyy" class = "datepicker" required>
 													</td>
 													<td  style = "font-size: 20px; height: 40px;"  >
-														<input type="number"   name = "dv_no" value = "" autocomplete = "off" id = "reference_no" style = "font-family: Segoe uI; text-align: center;height: 40px "  >
+														<input type="number"  name = "reference_no"  value = "" autocomplete = "off" id = "reference_no" style = "font-family: Segoe uI; text-align: center;height: 40px "  >
 													</td>
 													<!-- <td  style = "font-size: 20px; height: 40px;"  >
 														<input type="number"   name = "responsibilitycenter_no" value = "" autocomplete = "off" id = "reference_no" style = "font-family: Segoe uI; text-align: center;height: 40px "  >
 													</td> -->
 													<td  style = "font-size: 20px; height: 40px;"  >
-														<input type="number"   name = "reference_no" value = "" autocomplete = "off" id = "reference_no" style = "font-family: Segoe uI; text-align: center;height: 40px "  >
+														<input type="number"    name = "dv_no" id = "dv_no" value = "" autocomplete = "off"  style = "font-family: Segoe uI; text-align: center;height: 40px "  >
 													</td>
 													<td  style = " font-size: 20px; height: 40px;"  >
 														<input list = "suppliers"  name="supplier" id = "supplier" type = "text"  for = "particulardata" autocomplete = "off" style = "text-align: center; font-family: Segoe UI; box-sizing: border-box; height: 40px" >
@@ -240,7 +240,7 @@ select,  input[type="text"], input[type="password"], input[type="datetime"], inp
 														<input type="number"  id = "amount"  name = "amount" value = "" autocomplete = "off" style = "font-family: Segoe uI; text-align: center;height: 40px "  readonly>
 													</td>
 												</tr>
-												<input style = "display: none" type = "submit">
+										
 												</form>
 											</tbody>
 										</table>
@@ -248,15 +248,6 @@ select,  input[type="text"], input[type="password"], input[type="datetime"], inp
 								</div>
 							</div>
 						</div>	
-
-						<!-- <div class="span6" align = "right">
-							<div class="control-group">
-								<label class = "control-label">Search Cashbook Record</label>
-								<div class="controls">
-									<input type="text" name= "search" id= "search_item" style  = "font-family: Segoe UI; text-align: center" placeholder = " Search Here" >
-								</div>
-							</div>
-						</div> -->
 						
 						<div class="widget-box">
 							<div class="widget-title" style = "background-color: #d26334; color: black">
@@ -284,9 +275,11 @@ select,  input[type="text"], input[type="password"], input[type="datetime"], inp
 													<th></th>
 												</tr>
 											</thead>
-											<tbody>
+									
+												<tbody>
 
-											</tbody>
+												</tbody>
+										
 										</table>
 										<table>
 											<tbody>
@@ -336,12 +329,14 @@ select,  input[type="text"], input[type="password"], input[type="datetime"], inp
 @include('scripts/footer')
 
 <script>
-		show_allYears();
-		show_Funds();
-		show_allParticulars();
-		show_allSuppliers();
-		show_datetoday();
-	
+
+	show_allYears();
+	show_Funds();
+	show_allParticulars();
+	show_allSuppliers();
+	show_datetoday();
+	get_allResponsibiltyCenters();
+
 	$("#search_item").on('keyup', function(){
       var value = $(this).val().toLowerCase();
       $("#cashbooks tbody tr").filter(function(){
@@ -378,7 +373,7 @@ select,  input[type="text"], input[type="password"], input[type="datetime"], inp
 		$("#entries_id tr:last").after(markup);
 	})
 	
-	get_allResponsibiltyCenters();
+	
 	function get_allResponsibiltyCenters()
 	{
 		
@@ -397,34 +392,9 @@ select,  input[type="text"], input[type="password"], input[type="datetime"], inp
 			}
 		});
 	}
-	$("#btn_submit").on('click', function(){
-		var total_credit = 0;
-		var total_debit = 0;
-		const formatToCurrency = amount => {
-			return  amount.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,");
-		};
-		var resp_center = $("input[name='resp_center[]']").map(function(){
-			return $(this).val();
-		}).get();
-		var accountsandexplanation = $("input[name='accountsandexplanation[]']").map(function(){
-			return $(this).val();
-		}).get();
-		var account_code = $("input[name='account_code[]']").map(function(){
-			return $(this).val();
-		}).get();
-		var debit = $("input[name='debit[]']").map(function(){
-			var val = $(this).val();
-			total_debit += val*1;
-			return val;
-		}).get();
-		var credit = $("input[name='credit[]']").map(function(){
-			var val = $(this).val();
-			total_credit += val*1;
-			return val;
-		}).get();
-		var total_amount = total_debit + total_credit;
-		$("#amount").val(formatToCurrency(total_amount*1));
-	})
+	// $("#btn_submit").on('click', function(){
+		
+	// })
 	$("body").on('click', '.x', function(){
 		var row_id = $(this).data('id');
 		$("#row"+row_id).remove();
@@ -575,19 +545,49 @@ select,  input[type="text"], input[type="password"], input[type="datetime"], inp
 			})
 		}
 	})
-	$("#cb_form").on('submit', function(e){
+	$("#btn_submit").on('click', function(e){
 		e.preventDefault();
+
+		var total_credit = 0;
+		var total_debit = 0;
+		var no_of_rows = 0;
+		const formatToCurrency = amount => {
+			return  amount.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,");
+		};
+		var resp_center = $("input[name='resp_center[]']").map(function(){
+			return $(this).val();
+		}).get();
+		var accountsandexplanation = $("input[name='accountsandexplanation[]']").map(function(){
+			no_of_rows += 1;
+			return $(this).val();
+		}).get();
+		var account_code = $("input[name='account_code[]']").map(function(){
+			return $(this).val();
+		}).get();
+		var debit = $("input[name='debit[]']").map(function(){
+			var val = $(this).val();
+			total_debit += val*1;
+			return val;
+		}).get();
+		var credit = $("input[name='credit[]']").map(function(){
+			var val = $(this).val();
+			total_credit += val*1;
+			return val;
+		}).get();
+		console.log(credit);
+		var total_amount = total_debit + total_credit;
+		$("#amount").val(formatToCurrency(total_amount*1));
+
 		var fund = $("#fund").val();
 		var year = $("#year").val();
 		var month = $("#month").val();
 		var particular = $("#particular").val();
 		var date = $("#date").val();
-		var debit = $("#debit").val();
-		var credit = $("#credit").val();
 		var reference_no = $("#reference_no").val();
 		var supplier = $("#supplier").val();
+		var dv_no = $("#dv_no").val();
 		if(fund == ""){
-			alert('Please Select Fund')
+			alert('Please Select Fund');
 		}
 		else if(year == "") alert('Please Select Year')
 		else if(month == "") alert('Please Select Month')
@@ -611,10 +611,16 @@ select,  input[type="text"], input[type="password"], input[type="datetime"], inp
 							year: year,
 							month: month,
 							date: date,
+							amount: total_amount,
+							dv_no: dv_no,
+							no_of_rows: no_of_rows,
+							resp_centers: resp_center,
+							accountsandexplanations: accountsandexplanation,
+							accountcodes: account_code,
 							particular: particular,
 							reference_no: reference_no,
-							debit: debit,
-							credit: credit,
+							debits: debit,
+							credits: credit,
 							supplier: supplier,
 						},
 						dataType: 'json',
@@ -622,6 +628,7 @@ select,  input[type="text"], input[type="password"], input[type="datetime"], inp
 							if(response.status == 200){
 								alert(response.success)
 								$("#cb_form").trigger('reset');
+								$("#entries_form").trigger('reset');
 								$("#reference_no").val($("#checkno_2").val());
 							}
 							if(response.status == 400){
@@ -647,10 +654,16 @@ select,  input[type="text"], input[type="password"], input[type="datetime"], inp
 						year: year,
 						month: month,
 						date: date,
+						dv_no: dv_no,
+						no_of_rows: no_of_rows,
+						amount: total_amount,
+						resp_center: resp_center,
+						accountsandexplanations: accountsandexplanation,
+						accountcodes: account_code,
 						particular: particular,
 						reference_no: reference_no,
-						debit: debit,
-						credit: credit,
+						debits: debit,
+						credits: credit,
 						supplier: supplier,
 					},
 					dataType: 'json',
@@ -658,6 +671,7 @@ select,  input[type="text"], input[type="password"], input[type="datetime"], inp
 						if(response.status == 200){
 							alert(response.success)
 							$("#cb_form").trigger('reset');
+							$("#entries_id tbody").empty();
 							$("#reference_no").val($("#checkno_2").val());
 						}
 						if(response.status == 400){

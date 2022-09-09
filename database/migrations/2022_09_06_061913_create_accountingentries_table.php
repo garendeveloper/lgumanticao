@@ -27,12 +27,12 @@ return new class extends Migration
                     ->on('cashbooks')
                     ->onUpdate('cascade')
                     ->onDelete('cascade');
-            $table->unsignedBigInteger('accounts_id');
-            $table->foreign('accounts_id')
+            $table->unsignedBigInteger('account_id');
+            $table->foreign('account_id')
                     ->references('id')
-                    ->on('acountingentriesaccounts')
+                    ->on('accountingentries')
                     ->onUpdate('cascade')
-                    ->onDelete('cascade');
+                    ->onDelete('cascade');    
             $table->string('debit')->nullable();
             $table->string('credit')->nullable();
             $table->timestamps();
