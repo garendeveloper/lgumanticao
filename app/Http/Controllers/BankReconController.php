@@ -33,6 +33,11 @@ class BankReconController extends Controller
         }
        else return redirect('/')->with('Fails', 'You must be logged in!');
     }
+    public function get_allAccounts()
+    {
+        $data = DB::select('select * from acountingentriesaccounts');
+        echo json_encode($data);
+    }
     public function get_allResponsibilityCenters()
     {
         $data = DB::select('select * from responsibilitycenters');

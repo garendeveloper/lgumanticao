@@ -63,4 +63,6 @@ Route::group(['middleware' => ['AuthCheck']], function(){
     Route::get('get_designated_officerinfo', [DashboardController::class, 'get_designated_officerinfo']);
 
     Route::get('get_allResponsibilityCenters', [BankReconController::class, 'get_allResponsibilityCenters']);
+
+    Route::get('get_allAccounts', [BankReconController::class, 'get_allAccounts']);
 });

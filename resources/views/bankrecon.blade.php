@@ -230,15 +230,16 @@ select,  input[type="text"], input[type="password"], input[type="datetime"], inp
 															
 														</datalist>
 													</td>
+													<td  style = "font-size: 20px; height: 40px;"  >
+														<input type="number"  id = "amount"  name = "amount" value = "" autocomplete = "off" style = "font-family: Segoe uI; text-align: center;height: 40px "  readonly>
+													</td>
 													<!-- <td  style = "font-size: 20px; height: 40px;"  >
 														<input type="number"  name = "debit"  onkeyup = "checkDebit()" autocomplete = "off" style = "font-family: Segoe uI; text-align: right; height: 40px"  id = "debit" step = "0.01">
 													</td>
 													<td  style = " font-size: 20px; height: 40px;"  >
 														<input type="number" onkeyup = "checkCredit()" name = "credit"  id = "credit" style = "font-family: Segoe uI; text-align: right; height: 40px"  step = "0.01">
 													</td> -->
-													<td  style = "font-size: 20px; height: 40px;"  >
-														<input type="number"  id = "amount"  name = "amount" value = "" autocomplete = "off" style = "font-family: Segoe uI; text-align: center;height: 40px "  readonly>
-													</td>
+													
 												</tr>
 										
 												</form>
@@ -272,13 +273,14 @@ select,  input[type="text"], input[type="password"], input[type="datetime"], inp
 													<th>Account code</th>
 													<th>Debit</th>
 													<th>Credit</th>
-													<th></th>
 												</tr>
 											</thead>
-									
-												<tbody>
+											<tbody>
 
-												</tbody>
+											</tbody>
+											<tfooter>
+
+											</tfooter>
 										
 										</table>
 										<table>
@@ -336,6 +338,7 @@ select,  input[type="text"], input[type="password"], input[type="datetime"], inp
 	show_allSuppliers();
 	show_datetoday();
 	get_allResponsibiltyCenters();
+	show_allAccounts();
 
 	$("#search_item").on('keyup', function(){
       var value = $(this).val().toLowerCase();
@@ -349,20 +352,24 @@ select,  input[type="text"], input[type="password"], input[type="datetime"], inp
 		var markup = '<tr  id = "row'+lineNo+'" style = "height: 40px" >'+
 						'<td  style = "font-size: 20px; height: 40px; width: 100px"  >'+
 							'<input type="text"  id = "resp_center" list= "resp_centers" name = "resp_center[]"  autocomplete = "off" style = "width: 100%; font-family: Segoe uI; text-align: center;height: 40px; "  >'+
-							'<datalist id = "resp_centers"></datalist>'+
-
+							'<datalist id = "resp_centers"> '+
+							'</datalist>'+
 						'</td>'+
 						'<td  style = "font-size: 20px; height: 40px ; width: 450px;"  >'+
-							'<input type="text"  id = "accountsandexplanation[]"  name = "accountsandexplanation[]"  autocomplete = "off" style = "width: 100%; font-family: Segoe uI; text-align: center;height: 40px "  >'+
+							'<input type="text"  id = "accountsandexplanation[]" list = "accountsandexplanations"  name = "accountsandexplanation[]"  autocomplete = "off" style = "width: 100%; font-family: Segoe uI; text-align: center;height: 40px "  >'+
+							'<datalist id = "accountsandexplanations"> '+
+							'</datalist>'+
 						'</td>'+
 						'<td  style = "font-size: 20px; height: 40px; width: 250px"  >'+
-							'<input type="text"  id = "account_code[]"  name = "account_code[]"  autocomplete = "off" style = "width: 100%; font-family: Segoe uI; text-align: center;height: 40px "  >'+
+							'<input type="text"  id = "account_code[]" list = "accountcodes" name = "account_code[]"  autocomplete = "off" style = "width: 100%; font-family: Segoe uI; text-align: center;height: 40px "  >'+
+							'<datalist id = "accountcodes"> '+
+							'</datalist>'+
 						'</td>'+
 						'<td  style = "font-size: 20px; height: 40px; width: 150px"  >'+
-							'<input type="number" step = "0.01" id = "debit[]"  name = "debit[]"  autocomplete = "off" style = "width: 100%; font-family: Segoe uI; text-align: center;height: 40px "  >'+
+							'<input type="number" step = "0.01" id = "debit"  onkeyup = "checkCredit()" name = "debit[]"  autocomplete = "off" style = "width: 100%; font-family: Segoe uI; text-align: center;height: 40px "  >'+
 						'</td>'+
 						'<td  style = "font-size: 20px; height: 40px; width: 150px"  >'+
-							'<input type="number" step = "0.01"  id = "credit[]"  name = "credit[]" autocomplete = "off" style = "width: 100%; font-family: Segoe uI; text-align: center;height: 40px "  >'+
+							'<input type="number" step = "0.01"  id = "credit" onkeyup = "checkDebit()" name = "credit[]" autocomplete = "off" style = "width: 100%; font-family: Segoe uI; text-align: center;height: 40px "  >'+
 						'</td>'+
 						'<td  style = "font-size: 20px; height: 40px; width: 50px" align = "center" >'+
 							'<button  data-id = "'+lineNo+'" class = "btn btn-danger x"> X </button>'+
@@ -370,13 +377,12 @@ select,  input[type="text"], input[type="password"], input[type="datetime"], inp
 					'</tr>'; 
 					lineNo++;
 		
-		$("#entries_id tr:last").after(markup);
+		$("#entries_id tbody:last").after(markup);
 	})
 	
 	
 	function get_allResponsibiltyCenters()
 	{
-		
 		$.ajax({
 			type: 'GET',
 			url: '/get_allResponsibilityCenters',
@@ -392,9 +398,26 @@ select,  input[type="text"], input[type="password"], input[type="datetime"], inp
 			}
 		});
 	}
-	// $("#btn_submit").on('click', function(){
-		
-	// })
+	function show_allAccounts()
+	{
+		$.ajax({
+			type: 'GET',
+			url: '/get_allAccounts',
+			dataType: 'json',
+			success: 	function(data)
+			{
+				var option1 = "";
+				var option2 = "";
+				for(var i = 0; i<data.length; i++)
+				{
+					option1 += "<option>"+data[i].accountandexplanation+"</option>";
+					option2 += "<option>"+data[i].accountcode+"</option>";
+				}
+				$("#accountsandexplanations").html(option1);
+				$("#accountcodes").html(option2);
+			}
+		});
+	}
 	$("body").on('click', '.x', function(){
 		var row_id = $(this).data('id');
 		$("#row"+row_id).remove();
@@ -671,7 +694,10 @@ select,  input[type="text"], input[type="password"], input[type="datetime"], inp
 						if(response.status == 200){
 							alert(response.success)
 							$("#cb_form").trigger('reset');
-							$("#entries_id tbody").empty();
+							for(var i = 1; i<=lineNo; i++)
+							{
+								$("#row"+i).remove();
+							}
 							$("#reference_no").val($("#checkno_2").val());
 						}
 						if(response.status == 400){
